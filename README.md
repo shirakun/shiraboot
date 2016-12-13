@@ -28,7 +28,7 @@ shiraboot的产生纯属个人练手项目,其框架基于thinkphp5.0.2,且作�
 ## 参与开发
 直接push到master即可
 
-## 版权信息
+## 其它
 
 shiraboot继承ThinkPHP遵循Apache2开源协议发布，并提供免费使用。
 
