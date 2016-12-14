@@ -64,7 +64,7 @@ class Hub extends Controller
 				$this->error('您的并发攻击已经达到套餐上限,请停止部分攻击或购买补充包(暂未开放)!');
 				exit;
 			}
-			elseif(db('history')->where('ip',$hubInfo['host'])->find()) //检测是否存在于白名单
+			elseif(db('white_list')->where('ip',$hubInfo['host'])->find()) //检测是否存在于白名单
 			{
 				$this->error('此ip存在于白名单中,您禁止攻击它!');
 				exit;

@@ -24,9 +24,5 @@ class Cron extends Controller
 			$config->where('name','cron_user')->update(['value'=>time()]);
 			echo '用户次数更新完成';
 		}
-		
-		
-		
-		
 	}
 }
