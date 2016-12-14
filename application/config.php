@@ -230,4 +230,5 @@ return [
     ],
 	
 	'webname'=>'shiraboot',
+	'cronpwd'=>'shirasama',
 ];
