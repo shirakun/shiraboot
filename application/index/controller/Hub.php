@@ -30,6 +30,14 @@ class Hub extends Controller
 				'mode'=>input('post.mode'),
 				'vip'=>input('post.vip'),
 			];
+			
+			$result = $this->validate($hubInfo,'Hub.start');
+			if(true !== $result)
+			{
+				$this->error($result);
+				exit;
+			}
+			
 			if(!$userInfo['status']==1) //账户状态检测
 			{
 				$this->error('您的账户已被封禁或还没有激活!');

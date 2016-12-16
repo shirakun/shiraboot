@@ -229,6 +229,8 @@ return [
         'list_rows' => 15,
     ],
 	
-	'webname'=>'shiraboot',
-	'cronpwd'=>'shirasama',
+	'webname' => 'shiraboot', //网站名
+	'pwdhead' => 'shira', //密码加密时的前缀
+	'pwdfoot' => 'sama', //密码加密时的后缀
+	'cronpwd'=>'shirasama', //cron的密钥
 ];

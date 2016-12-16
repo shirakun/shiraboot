@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 2016-12-13 09:28:37
+-- Generation Time: 2016-12-16 08:24:16
 -- 服务器版本： 10.1.13-MariaDB
 -- PHP Version: 5.6.23
 
@@ -19,6 +19,27 @@ SET time_zone = "+00:00";
 --
 -- Database: `shiraboot`
 --
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `srk_api`
+--
+
+CREATE TABLE `srk_api` (
+  `id` int(11) NOT NULL COMMENT 'id号',
+  `uid` int(11) NOT NULL COMMENT '用户的id号',
+  `api_key` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '密钥',
+  `expiration` int(11) NOT NULL COMMENT '到期时间',
+  `status` int(11) NOT NULL COMMENT '0停用1正常2禁止'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- 转存表中的数据 `srk_api`
+--
+
+INSERT INTO `srk_api` (`id`, `uid`, `api_key`, `expiration`, `status`) VALUES
+(1, 2, '8f394c89369d2b7a7e40917293c1492e', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -90,7 +111,8 @@ CREATE TABLE `srk_config` (
 
 INSERT INTO `srk_config` (`name`, `value`, `note`) VALUES
 ('reflect', '["ntp","dns","ssdp","mssql","chargen","snmp","sentinel","netbios","ts3","db2","portmap"]', '反射类型的模式'),
-('usually', '["udp","vse","telnet","home","tcp","tcp-se","tcp-ack","tcp-rst","tcp-psh","tcp-fin","tcp-xmas","wizard","dominate","zap","ssyn","essyn","issyn","xsyn","zsyn","csyn"]', '通常类型的模式');
+('usually', '["udp","vse","telnet","home","tcp","tcp-se","tcp-ack","tcp-rst","tcp-psh","tcp-fin","tcp-xmas","wizard","dominate","zap","ssyn","essyn","issyn","xsyn","zsyn","csyn"]', '通常类型的模式'),
+('cron_user', '1481676257', '上一次更新用户数据执行的时间');
 
 -- --------------------------------------------------------
 
@@ -189,7 +211,7 @@ CREATE TABLE `srk_users` (
   `status` int(11) NOT NULL COMMENT '用户状态',
   `type` int(11) NOT NULL COMMENT '用户类型',
   `plan` int(11) NOT NULL COMMENT '所属套餐',
-  `plan_name` varchar(32) COLLATE utf8mb4_bin NOT NULL DEFAULT '未购买' COMMENT '套餐名称',
+  `plan_name` varchar(32) COLLATE utf8mb4_bin DEFAULT '未购买' COMMENT '套餐名称',
   `maxtime` int(11) NOT NULL DEFAULT '0' COMMENT '最大攻击时间',
   `maxnum` int(11) NOT NULL COMMENT '最大次数',
   `maxboot` int(11) NOT NULL DEFAULT '0' COMMENT '最大并发',
@@ -204,7 +226,7 @@ CREATE TABLE `srk_users` (
 
 INSERT INTO `srk_users` (`id`, `username`, `passwd`, `email`, `register_time`, `status`, `type`, `plan`, `plan_name`, `maxtime`, `maxnum`, `maxboot`, `remainder`, `expiration`, `vip`) VALUES
 (2, 'shirakun', 'd3590861347be1691af0dc1883fbd758', 'nico@ni-co.moe', 1481185914, 2, 2, 2, 'smaill', 120, 50, 1, 50, 1484380781, 0),
-(3, 'shirakun2', 'd3590861347be1691af0dc1883fbd758', 'nico@ni-co.moe', 1481186770, 2, 1, 0, '未购买', 0, 0, 0, 0, 0, 0);
+(3, 'shirakun2', 'd3590861347be1691af0dc1883fbd758', 'nico@ni-co.moe', 1481186770, 2, 1, 0, '', 0, 0, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -237,6 +259,12 @@ CREATE TABLE `srk_white_list` (
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `srk_api`
+--
+ALTER TABLE `srk_api`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `srk_article`
@@ -291,6 +319,11 @@ ALTER TABLE `srk_white_list`
 --
 
 --
+-- 使用表AUTO_INCREMENT `srk_api`
+--
+ALTER TABLE `srk_api`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id号', AUTO_INCREMENT=2;
+--
 -- 使用表AUTO_INCREMENT `srk_article`
 --
 ALTER TABLE `srk_article`
@@ -309,7 +342,7 @@ ALTER TABLE `srk_history`
 -- 使用表AUTO_INCREMENT `srk_plans`
 --
 ALTER TABLE `srk_plans`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id号', AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id号', AUTO_INCREMENT=3;
 --
 -- 使用表AUTO_INCREMENT `srk_server`
 --
@@ -319,7 +352,7 @@ ALTER TABLE `srk_server`
 -- 使用表AUTO_INCREMENT `srk_users`
 --
 ALTER TABLE `srk_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户id', AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户id', AUTO_INCREMENT=5;
 --
 -- 使用表AUTO_INCREMENT `srk_verification_code`
 --
@@ -329,7 +362,7 @@ ALTER TABLE `srk_verification_code`
 -- 使用表AUTO_INCREMENT `srk_white_list`
 --
 ALTER TABLE `srk_white_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id号', AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id号';
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

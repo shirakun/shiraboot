@@ -29,37 +29,9 @@ function chickLogin ($odb){
 
 //	密码加密
 function cpwd ($pwd){
-	return md5('shira'.md5($pwd).'sama');
+	return md5(config('pwdhead').md5($pwd).config('pwdfoot'));
 }
-
-//检测数组是否为空
-function chickNull ($arr)
-{
-    if (!is_array ($arr))
-    {
-		if($arr==null)
-		{
-			return false;
-		} 
-    }
-
-    foreach ($arr as $val )
-    {
-        if (is_array ($val))
-        {
-            chickNull($val);
-        }
-        else
-        {
-			if($arr==null)
-			{
-				return false;
-			} 
-        }
-    }
-	
-	return true;
-}
+//获取用户信息
 function getUserInfo($odb,$arr=null)
 {
 	if(!$arr)

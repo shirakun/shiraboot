@@ -38,12 +38,19 @@ class User extends Controller
 		}
 		if(Request::instance()->isPost())
 		{
-			$User = db('users');
+			$result = $this->validate(input('post.'),'User.login');
+			if(true !== $result)
+			{
+				$this->error($result);
+				exit;
+			}
 			
+			$User = db('users');
 			$tmp = [
 				'user'=>input('post.user'),
 				'passwd'=>cpwd(input('post.passwd'))
 			];
+			
 			if(!$userInfo=getUserInfo($User,$tmp))
 			{
 				$this->error('用户不存在或您输入的信息有误!');
@@ -63,10 +70,14 @@ class User extends Controller
     public function register(){
         if(Request::instance()->isPost())
 		{
-			//var_dump(input('param.'));
-			//exit;
+			$result = $this->validate(input('post.'),'User.register');
+			if(true !== $result)
+			{
+				$this->error($result);
+				exit;
+			}
 			$userInfo = [
-				'username'=>input('post.username'),
+				'username'=>input('post.user'),
 				'passwd'=>cpwd(input('post.passwd')),
 				'email'=>input('post.email'),
 				'register_time'=>time(),
@@ -79,12 +90,6 @@ class User extends Controller
 				'expiration'=>0,
 				'vip'=>0,
 			];
-			if(!chickNull($userInfo))
-			{
-				echo '空';
-				$this->error('请填写所有表项');
-				exit;
-			}
 			$User = db('users'); 
 			if($User->where("username='{$userInfo['username']}' or email='{$userInfo['email']}'")->find())
 			{
@@ -235,15 +240,21 @@ class User extends Controller
 		}
 		elseif(input('?param.remail')) //修改邮箱
 		{
+			$result = $this->validate(input('param.'),'User.reemail');
+			if(true !== $result)
+			{
+				$this->error($result);
+				exit;
+			}
 			if(!$codeInfo = $vcode->where(['uid'=>$userInfo['id'],'value'=>input('param.code'),'email'=>$userInfo['email'],'type'=>2])->find())
 			{
-				$this->error('未查询到验证码信息');
+				$this->error('未查询到验证码信息!');
 				exit;
 			}
 			elseif($codeInfo['expiration'] < time())
 			{
 				$vcode->where('id',$codeInfo['id'])->delete();
-				$this->error('验证码已过期,请重新获取');
+				$this->error('验证码已过期,请重新获取!');
 				exit;
 			}
 			else
@@ -258,9 +269,15 @@ class User extends Controller
 		}
 		elseif(input('?param.repwd')) //修改密码
 		{
+			$result = $this->validate(input('param.'),'User.repwd');
+			if(true !== $result)
+			{
+				$this->error($result);
+				exit;
+			}
 			if(!$codeInfo = $vcode->where(['uid'=>$userInfo['id'],'value'=>input('param.code'),'email'=>$userInfo['email'],'type'=>3])->find())
 			{
-				$this->error('未查询到验证码信息');
+				$this->error('未查询到验证码信息!');
 				exit;
 			}
 			elseif($codeInfo['expiration'] < time())
