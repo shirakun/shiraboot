@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: 2016-12-16 08:24:16
+-- Generation Time: 2016-12-17 08:47:21
 -- 服务器版本： 10.1.13-MariaDB
 -- PHP Version: 5.6.23
 
@@ -39,7 +39,7 @@ CREATE TABLE `srk_api` (
 --
 
 INSERT INTO `srk_api` (`id`, `uid`, `api_key`, `expiration`, `status`) VALUES
-(1, 2, '8f394c89369d2b7a7e40917293c1492e', 1, 1);
+(2, 2, 'c35c45188fe3c610536b4792f74b79d9', 1484545145, 1);
 
 -- --------------------------------------------------------
 
@@ -75,11 +75,14 @@ INSERT INTO `srk_article` (`id`, `title`, `content`, `author`, `time`, `type`) V
 CREATE TABLE `srk_cdkey` (
   `id` int(11) NOT NULL COMMENT 'id号',
   `value` varchar(32) COLLATE utf8mb4_bin NOT NULL COMMENT '卡密',
-  `plan` int(11) NOT NULL COMMENT '对应套餐号',
-  `expiration` int(11) NOT NULL,
+  `plan` int(11) DEFAULT NULL COMMENT '对应套餐号',
+  `expiration` int(11) DEFAULT NULL,
+  `type` int(11) NOT NULL DEFAULT '1' COMMENT '1普通套餐2临时补充包3套餐补充包4api权限5并发补充包',
   `status` int(11) NOT NULL COMMENT '状态',
   `expiry_date` int(11) DEFAULT NULL COMMENT '有效期',
+  `num` int(11) DEFAULT NULL COMMENT '临时或套餐补充包的补充数量',
   `uid` int(11) DEFAULT NULL COMMENT '使用者id',
+  `use_time` int(11) DEFAULT NULL COMMENT '使用时间',
   `note` varchar(64) COLLATE utf8mb4_bin DEFAULT '没有备注' COMMENT '备注'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -87,11 +90,11 @@ CREATE TABLE `srk_cdkey` (
 -- 转存表中的数据 `srk_cdkey`
 --
 
-INSERT INTO `srk_cdkey` (`id`, `value`, `plan`, `expiration`, `status`, `expiry_date`, `uid`, `note`) VALUES
-(40, 'fdb8ee71a77d5901b0f7eb032b483497', 2, 259200, 0, NULL, NULL, '没有备注'),
-(41, '0e4dd51180af244c121fd0f156ba7b2b', 2, 259200, 2, NULL, NULL, '没有备注'),
-(42, '8de06f322a3d4814528bf87ab42c960b', 2, 259200, 1, NULL, NULL, '没有备注'),
-(43, '04cf3167058817f962a3095d2ce61d44', 2, 259200, 0, NULL, NULL, '没有备注');
+INSERT INTO `srk_cdkey` (`id`, `value`, `plan`, `expiration`, `type`, `status`, `expiry_date`, `num`, `uid`, `use_time`, `note`) VALUES
+(40, 'fdb8ee71a77d5901b0f7eb032b483497', 2, 259200, 1, 0, NULL, NULL, NULL, NULL, '没有备注'),
+(41, '0e4dd51180af244c121fd0f156ba7b2b', 2, 259200, 1, 2, NULL, NULL, NULL, NULL, '没有备注'),
+(42, '8de06f322a3d4814528bf87ab42c960b', 2, 259200, 1, 1, NULL, NULL, NULL, NULL, '没有备注'),
+(43, '04cf3167058817f962a3095d2ce61d44', 2, 259200, 1, 0, NULL, NULL, NULL, NULL, '没有备注');
 
 -- --------------------------------------------------------
 
@@ -112,7 +115,8 @@ CREATE TABLE `srk_config` (
 INSERT INTO `srk_config` (`name`, `value`, `note`) VALUES
 ('reflect', '["ntp","dns","ssdp","mssql","chargen","snmp","sentinel","netbios","ts3","db2","portmap"]', '反射类型的模式'),
 ('usually', '["udp","vse","telnet","home","tcp","tcp-se","tcp-ack","tcp-rst","tcp-psh","tcp-fin","tcp-xmas","wizard","dominate","zap","ssyn","essyn","issyn","xsyn","zsyn","csyn"]', '通常类型的模式'),
-('cron_user', '1481676257', '上一次更新用户数据执行的时间');
+('cron_user', '1481676257', '上一次更新用户数据执行的时间'),
+('api_buy', '1', '是否可以购买api');
 
 -- --------------------------------------------------------
 
@@ -151,8 +155,9 @@ CREATE TABLE `srk_plans` (
   `name` varchar(16) COLLATE utf8mb4_bin NOT NULL COMMENT '名称',
   `concern` varchar(300) COLLATE utf8mb4_bin DEFAULT '此套餐暂无简介' COMMENT '简介',
   `price` int(11) NOT NULL COMMENT '价格',
-  `cycle` int(11) NOT NULL COMMENT '付费周期(秒)',
-  `maxtime` int(11) NOT NULL COMMENT '最大时间',
+  `type` int(11) DEFAULT '1' COMMENT '1普通2临时3套餐4api5并发',
+  `cycle` int(11) DEFAULT NULL COMMENT '付费周期(秒)',
+  `maxtime` int(11) DEFAULT NULL COMMENT '最大时间',
   `maxnum` int(11) NOT NULL COMMENT '每日次数',
   `maxboot` int(11) NOT NULL DEFAULT '1' COMMENT '最大并发',
   `status` int(11) NOT NULL COMMENT '状态',
@@ -163,9 +168,9 @@ CREATE TABLE `srk_plans` (
 -- 转存表中的数据 `srk_plans`
 --
 
-INSERT INTO `srk_plans` (`id`, `name`, `concern`, `price`, `cycle`, `maxtime`, `maxnum`, `maxboot`, `status`, `vip`) VALUES
-(1, 'admin2', '这是管理员专属套餐普通会员禁止购买', 999, 2592000, 3600, 100, 1, 0, 1),
-(2, 'smaill', '这是一个小型套餐', 30, 2592000, 120, 50, 1, 1, 0);
+INSERT INTO `srk_plans` (`id`, `name`, `concern`, `price`, `type`, `cycle`, `maxtime`, `maxnum`, `maxboot`, `status`, `vip`) VALUES
+(1, 'admin2', '这是管理员专属套餐普通会员禁止购买', 999, 1, 2592000, 3600, 100, 1, 0, 1),
+(2, 'smaill', '这是一个小型套餐', 30, 1, 2592000, 120, 50, 1, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -322,7 +327,7 @@ ALTER TABLE `srk_white_list`
 -- 使用表AUTO_INCREMENT `srk_api`
 --
 ALTER TABLE `srk_api`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id号', AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'id号', AUTO_INCREMENT=3;
 --
 -- 使用表AUTO_INCREMENT `srk_article`
 --
@@ -352,7 +357,7 @@ ALTER TABLE `srk_server`
 -- 使用表AUTO_INCREMENT `srk_users`
 --
 ALTER TABLE `srk_users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户id', AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户id', AUTO_INCREMENT=4;
 --
 -- 使用表AUTO_INCREMENT `srk_verification_code`
 --

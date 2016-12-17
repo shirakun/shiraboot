@@ -55,20 +55,74 @@ class Plans extends Controller
 		if(!$planInfo = $buy->where(['id'=>$planId,'status'=>1])->find())
 		{
 			$this->error('您购买的套餐不存在或处于停售状态!');
+			exit;
+		}
+		unset($userInfo['percent']); //删除用户数据的百分比
+		if($planInfo['type'] == 1) //普通套餐
+		{
+			if($planInfo['id'] != $userInfo['plan'] && $userInfo['expiration'] > time())
+			{
+				$this->error('您当前套餐未到期且购买的套餐和您当前套餐不同,禁止购买(您可以购买相同套餐来续期或等待套餐过期后再购买其它套餐).');
+				exit;
+			}
+			if($userInfo['expiration'] > time()) //用户套餐已经到期
+			{
+				$userInfo['plan'] = $planId;
+				$userInfo['plan_name'] = $planInfo['name'];
+				$userInfo['maxtime'] = $planInfo['maxtime'];
+				$userInfo['maxboot'] = $planInfo['maxboot'];
+				$userInfo['maxnum'] = $planInfo['maxnum'];
+				$userInfo['remainder'] = $planInfo['maxnum'];
+				$userInfo['expiration'] = time() + $planInfo['cycle'];
+				$userInfo['vip'] = $planInfo['vip'];
+				$user->where('id',$userInfo['id'])->update($userInfo);
+				$successMsg = '续期成功!';
+				
+			}
+			else
+			{
+				$userInfo['expiration'] = $userInfo['expiration'] + $planInfo['cycle'];
+				$user->where('id',$userInfo['id'])->update($userInfo);
+				$successMsg = '购买成功!';
+			}
+			
+		}
+		elseif($planInfo['type'] == 2) //临时补充包
+		{
+			$userInfo['remainder'] = $userInfo['remainder'] + $planInfo['maxnum'];
+			$user->where('id',$userInfo['id'])->update($userInfo);
+			$successMsg = '临时补充包以应用到您的账户,请在次日0点前使用,预期失效!';
+		}
+		elseif($planInfo['type'] == 3) //套餐补充包
+		{
+			$userInfo['maxnum'] = $userInfo['maxnum'] + $planInfo['maxnum'];
+			$userInfo['remainder'] = $userInfo['remainder'] + $planInfo['maxnum'];
+			$user->where('id',$userInfo['id'])->update($userInfo);
+			$successMsg = '套餐补充包以应用到您的账户,请注意套餐到期时间,套餐补充包将随着套餐的到期而失效!';
+		}
+		elseif($planInfo['type'] == 4) //api权限
+		{
+			$apiData = [
+				'uid'=>$userInfo['id'],
+				'api_key'=>cpwd($userInfo['passwd'].time()),
+				'expiration'=>time() + $cdkeyInfo['expiration'],
+				'status'=>1,
+			];
+			db('api')->insert($apiData);
+			$successMsg = 'api已经成功应用到您的账户.';
+			$this->success('购买成功','hub/index');
+		}
+		elseif($planInfo['type'] == 5) //并发补充包
+		{
+			$userInfo['maxboot'] = $userInfo['maxboot'] + $planInfo['maxboot'];
+			$user->where('id',$userInfo['id'])->update($userInfo);
+			$successMsg = '并发补充包以应用到您的账户,请注意套餐到期时间,并发补充包将随着套餐的到期而失效!';
 		}
 		else
 		{
-			unset($userInfo['percent']); //删除用户数据的百分比
-			$userInfo['plan'] = $planId;
-			$userInfo['plan_name'] = $planInfo['name'];
-			$userInfo['maxtime'] = $planInfo['maxtime'];
-			$userInfo['maxboot'] = $planInfo['maxboot'];
-			$userInfo['maxnum'] = $planInfo['maxnum'];
-			$userInfo['remainder'] = $planInfo['maxnum'];
-			$userInfo['expiration'] = time() + $planInfo['cycle'];
-			$userInfo['vip'] = $planInfo['vip'];
-			$user->where('id',$userInfo['id'])->update($userInfo);
-			$this->success('购买成功','hub/index');
+			$this->error("您购买的套餐类型不正确!");
+			exit;
 		}
+		$this->success($successMsg,'hub/index');
 	}
 }

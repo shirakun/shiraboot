@@ -78,7 +78,7 @@ class Api extends Controller
 		}
 		elseif(!$history=db('history') || getBooting($history)>=$userInfo['maxboot']) //检测最大并发
 		{
-			$this->error('您的并发攻击已经达到套餐上限,请停止部分攻击或购买补充包(暂未开放)!');
+			$this->error('您的并发攻击已经达到套餐上限,请停止部分攻击或购买补充包!');
 			exit;
 		}
 		elseif(db('white_list')->where('ip',$hubInfo['host'])->find()) //检测是否存在于白名单

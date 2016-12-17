@@ -188,15 +188,15 @@ class User extends Controller
 			}
 			elseif($cdkeyInfo['type'] == 2) //临时补充包
 			{
-				$userInfo['remainder'] => $userInfo['remainder'] + $cdkeyInfo['num'];
+				$userInfo['remainder'] = $userInfo['remainder'] + $cdkeyInfo['num'];
 				$successInfo = '相应的临时补充包已经应用到您的账户,请在次日0时使用,逾期失效!';
 				$user->where('id',$userInfo['id'])->update($userInfo);
 			}
 			elseif($cdkeyInfo['type'] == 3) //套餐补充包
 			{
-				$userInfo['maxnum'] => $userInfo['maxnum'] + $cdkeyInfo['num'];
-				$userInfo['remainder'] => $userInfo['remainder'] + $cdkeyInfo['num'];
-				$successInfo = '套餐补充包已经应用到您的账户,请尽量保持套餐有效性,套餐到期时补充包跟随套餐失效!';
+				$userInfo['maxnum'] = $userInfo['maxnum'] + $cdkeyInfo['num'];
+				$userInfo['remainder'] = $userInfo['remainder'] + $cdkeyInfo['num'];
+				$successInfo = '套餐补充包以应用到您的账户,请注意套餐到期时间,套餐补充包将随着套餐的到期而失效!';
 				$user->where('id',$userInfo['id'])->update($userInfo);
 			}
 			elseif($cdkeyInfo['type'] == 4) //vip权限
@@ -212,13 +212,13 @@ class User extends Controller
 			}
 			elseif($cdkeyInfo['type'] == 5) //并发补充包
 			{
-				$userInfo['maxboot'] => $userInfo['maxboot'] + $cdkeyInfo['num'];
-				$successInfo = '并发补充包已经应用到您的账户,请尽量保持套餐有效性,套餐到期时补充包跟随套餐失效!';
+				$userInfo['maxboot'] = $userInfo['maxboot'] + $cdkeyInfo['num'];
+				$successInfo = '并发补充包已经应用到您的账户,请注意套餐到期时间,并发补充包将随着套餐的到期而失效!';
 				$user->where('id',$userInfo['id'])->update($userInfo);
 			}
 			else
 			{
-				$this->error('密钥信息有误1,请联系管理员!');
+				$this->error('密钥信息有误,请联系管理员!');
 				exit;
 			}
 			
@@ -340,4 +340,5 @@ class User extends Controller
 		}
 
 	}
+	
 }
