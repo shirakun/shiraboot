@@ -17,6 +17,7 @@ class Plans extends Controller
 			exit;
 		}
 		$this->assign('userInfo',$userInfo);
+		$this->assign('api',db('config')->where('name','api_buy')->find()['value']==1);
 		$this->assign('plansInfo',db('plans')->select());
 		return $this->fetch();
 	}
@@ -30,6 +31,27 @@ class Plans extends Controller
 		}
 		$planId = input('param.id');
 		$buy = db('plans');
+		if($planId == 'api')
+		{
+			if(db('config')->where('name','api_buy')->find()['value']==1)
+			{
+				$apiData = [
+					'uid'=>$userInfo['id'],
+					'api_key'=>cpwd($userInfo['passwd'].time()),
+					'status'=>1,
+					'expiration'=>time() + 2592000,
+				];
+				db('api')->insert($apiData);
+				$this->success('购买成功!');
+				
+			}
+			else
+			{
+				$this->error('当前禁止购买api,请联系管理员!');
+			}
+			exit;
+		}
+		
 		if(!$planInfo = $buy->where(['id'=>$planId,'status'=>1])->find())
 		{
 			$this->error('您购买的套餐不存在或处于停售状态!');

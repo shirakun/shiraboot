@@ -93,6 +93,51 @@
                 </div>
 				<!--套餐结束-->
 				{/volist}
+				<!--api-->
+				{eq name="api" value="1"}
+				<div class="col-lg-3">
+                    <div class="panel panel-green">
+                        <div class="panel-heading text-center">
+                            API权限                        </div>
+                        <div class="panel-body">
+                                <span class="list-group-item">
+                                    <i class="glyphicon glyphicon-fire fa-fw"></i>注意:API权限只是API使用的权限,不附带任何套餐,和套餐到期时间分别计费.
+                                </span>
+                                <span class="list-group-item">
+                                    <i class="fa fa-fire fa-fw"></i> 最大并发
+                                    <span class="pull-right text-muted ">和用户套餐相同</span>
+                                </span>
+                                <span class="list-group-item">
+                                    <i class="fa fa-fire fa-fw"></i> 每日最大攻击数量
+                                    <span class="pull-right text-muted ">和用户套餐相同</span>
+                                </span>
+                                <span class="list-group-item">
+                                    <i class="fa fa-rmb fa-fw"></i> 套餐价格
+                                    <span class="pull-right text-muted ">30</span>
+                                </span>
+                                <span class="list-group-item">
+                                    <i class="fa fa-star fa-fw"></i> 套餐类型
+                                    <span class="pull-right text-muted ">
+																		和用户套餐相同
+																		</span>
+                                </span>
+                                <span class="list-group-item">
+                                    <i class="fa fa-reorder fa-fw"></i> 销售状态
+                                    <span class="pull-right text-muted ">
+																		正在销售
+																		</span>
+                                </span>
+								<span class="list-group-item">
+                                    <i class="glyphicon glyphicon-time fa-fw"></i> 计费周期
+                                    <span class="pull-right text-muted ">30天</span>
+                                </span>
+							<a href="{:Url('Index/Plans/buy',['id'=>'api'])}" class="btn btn-default col-lg-4 btn-block">购买套餐</a>
+						</div>
+						
+                    </div>
+                </div>
+				{/eq}
+				<!--api-->
 			</div>
         </div>
         <!-- /#page-wrapper -->

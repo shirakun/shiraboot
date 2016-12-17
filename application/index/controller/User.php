@@ -155,13 +155,10 @@ class User extends Controller
 			if(!$cdkeyInfo = $cdkey->where(['value'=>input('post.value'),'status'=>0])->find())
 			{
 				$this->error('密钥不存在或者密钥不是未使用状态!');
-			}
-			elseif(!$planInfo = db('plans')->where('id',$cdkeyInfo['plan'])->find())
-			{
-				$this->error('这个套餐已经被管理员删除,请联系管理员退款或更换套餐!');
 				exit;
 			}
-			else
+			
+			if($cdkeyInfo['type'] == 1) //普通的套餐类型
 			{
 				if($userInfo['plan'] != $cdkeyInfo['plan'] && $userInfo['expiration'] > time()) //套餐不同且未到期
 				{
@@ -188,11 +185,51 @@ class User extends Controller
 				$userInfo['remainder'] = $planInfo['maxnum'];
 				$userInfo['vip'] = $planInfo['vip'];
 				$user->where('id',$userInfo['id'])->update($userInfo);
-				
-				$cdkeyInfo['status'] = 1;
-				$cdkey->where('id',$cdkeyInfo['id'])->update($cdkeyInfo);
-				$this->success($successInfo,'Index/Hub/index');
 			}
+			elseif($cdkeyInfo['type'] == 2) //临时补充包
+			{
+				$userInfo['remainder'] => $userInfo['remainder'] + $cdkeyInfo['num'];
+				$successInfo = '相应的临时补充包已经应用到您的账户,请在次日0时使用,逾期失效!';
+				$user->where('id',$userInfo['id'])->update($userInfo);
+			}
+			elseif($cdkeyInfo['type'] == 3) //套餐补充包
+			{
+				$userInfo['maxnum'] => $userInfo['maxnum'] + $cdkeyInfo['num'];
+				$userInfo['remainder'] => $userInfo['remainder'] + $cdkeyInfo['num'];
+				$successInfo = '套餐补充包已经应用到您的账户,请尽量保持套餐有效性,套餐到期时补充包跟随套餐失效!';
+				$user->where('id',$userInfo['id'])->update($userInfo);
+			}
+			elseif($cdkeyInfo['type'] == 4) //vip权限
+			{
+				$apiData = [
+					'uid'=>$userInfo['id'],
+					'api_key'=>cpwd($userInfo['passwd'].time()),
+					'expiration'=>time() + $cdkeyInfo['expiration'],
+					'status'=>1,
+				];
+				db('api')->insert($apiData);
+				$successInfo = 'api已经成功应用到您的账户.';
+			}
+			elseif($cdkeyInfo['type'] == 5) //并发补充包
+			{
+				$userInfo['maxboot'] => $userInfo['maxboot'] + $cdkeyInfo['num'];
+				$successInfo = '并发补充包已经应用到您的账户,请尽量保持套餐有效性,套餐到期时补充包跟随套餐失效!';
+				$user->where('id',$userInfo['id'])->update($userInfo);
+			}
+			else
+			{
+				$this->error('密钥信息有误1,请联系管理员!');
+				exit;
+			}
+			
+			//更新密钥使用信息
+			$cdkeyInfo['status'] = 1;
+			$cdkeyInfo['uid'] =$userInfo['id'];
+			$cdkeyInfo['user_time'] =time();
+			$cdkey->where('id',$cdkeyInfo['id'])->update($cdkeyInfo);
+			$this->success($successInfo,'Index/Hub/index');
+			
+
 		}
 		else
 		{

@@ -68,7 +68,7 @@ class Api extends Controller
 		}
 		elseif($userInfo['remainder']==0) //剩余次数是否为0
 		{
-			$this->error('您当日剩余次数已经用完,请明日再试,或者购买临时次数补充包(暂未开放)!');
+			$this->error('您当日剩余次数已经用完,请明日再试,或者购买临时次数补充包!');
 			exit;
 		}
 		elseif($userInfo['vip']==0 && !$hubInfo['vip']==0) //检测vip
