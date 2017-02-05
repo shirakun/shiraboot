@@ -151,7 +151,7 @@ class Plans extends Controller
 			'pay_total'=>$planInfo['price'],
 			'plan_id'=>$planInfo['id'],
 			'pay_type'=>'alipay',
-			'pay_sn'=>'alip'.config('pay_id').time(), //生成订单号
+			'pay_sn'=>'alip'.config('jsj_pay_id').time(), //生成订单号
 			'pay_status'=>0,
 			'time'=>time(),
 			'pay_time'=>null
@@ -162,8 +162,8 @@ class Plans extends Controller
 			'total'=>$planInfo['price'],
 			'uid'=>$userInfo['id'],
 			'addnum'=> $orderInfo['pay_sn'],
-			'apiid'=>config('pay_id'),
-			'apikey'=>md5(config('pay_key')),
+			'apiid'=>config('jsj_pay_id'),
+			'apikey'=>md5(config('jsj_pay_key')),
 			'showurl'=>'http://'.$_SERVER['HTTP_HOST'].url('index/plans/buy2'),
 		];
 		echo "
@@ -181,13 +181,20 @@ class Plans extends Controller
 	}
 	//支付回调
 	public function buy2(){
-		//以下四行无需更改		
+		//以下四行无需更改
 		$addnum = input('param.addnum');		//接收到的订单编号
 		$uid = input('param.uid');				//接收到的会员id
 		$total = round(input('param.total'), 2);			//接收到的支付金额
 		$apikey = input('param.apikey');		//接收到的验证加密字串
-
-		if($apikey!=md5(config('pay_key').$addnum)){
+		if(!input('?param.apikey')){
+			$this->redirect('index/user/index');
+		}
+		//验证回调是否为金沙江(金沙江同步回调有fd漏洞)
+		if(getIP()!=config('jsj_ip')){
+			$this->error('支付完成,您的订单已被处理,如果2小时后您仍未获得套餐请联系管理员.','index/user/index');
+			exit;
+		}
+		if($apikey!=md5(config('jsj_pay_key').$addnum)){
 			$this->error('您的支付信息存在安全问题,请联系管理员!','index/user/index');
 			exit;
 		}

@@ -233,6 +233,8 @@ return [
 	'pwdhead' => 'shira', //密码加密时的前缀
 	'pwdfoot' => 'sama', //密码加密时的后缀
 	'cronpwd'=>'your_key', //cron的密钥
-	'pay_api'=>'your api id',
-	'pay_key'=>'your api key',
+	//金沙江支付宝免签api
+	'jsj_pay_id' =>'',
+	'jsj_pay_key' =>'',
+	'jsj_ip'=>'111.67.196.58' //jsj异步回调ip
 ];
