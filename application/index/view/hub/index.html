@@ -86,7 +86,6 @@
 										<input type="radio" name="vip" id="optionsRadiosInline2" value="1">vip节点
 									</label>
 							   </div>
-
 							</div>
 							<div class="panel-footer">
 								<button type="submit" class="btn btn-success">开始攻击</button>
@@ -94,6 +93,54 @@
 						</div>
 					</form>
                     <!-- /.col-lg-4 -->
+                </div>
+				<div class="col-lg-8">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            攻击历史
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="table-responsive">
+								<table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ip</th>
+                                            <th>模式</th>
+                                            <th>时间</th>
+                                            <th>状态</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+									{volist name='historyList' id='vo'}
+											<tr>
+                                            <td>{$vo.ip}</td>
+                                            <td>{$vo.mode}</td>
+                                            <td>{$vo.time}</td>
+											{if condition="$vo['start_time'] + $vo['time'] elt time() and $vo['stop'] neq 1"}
+												<td>已结束</td>
+											{elseif condition="$vo['start_time'] + $vo['time'] gt time() and $vo['stop'] neq 1"/}
+											<td>进行中</td>
+											{else /}
+											<td>已停止</td>
+											{/if}
+											{if condition="$vo['start_time'] + $vo['time'] elt time() and $vo['stop'] neq 1"}
+												<td><button type="button" class="btn btn-info disabled">已结束</button></td>
+											{elseif condition="$vo['start_time'] + $vo['time'] gt time() and $vo['stop'] neq 1"/}
+											<td><a href="{:url('index/hub/stop',['id'=>$vo['id']])}" class="btn btn-primary">停止</a></td>
+											{else /}
+											<td><button type="button" class="btn btn-info disabled">已停止</button></td>
+											{/if}
+                                        </tr>
+									{/volist}
+									</tbody>
+                                </table>
+								                            </div>
+							                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
                 </div>
 			</div>
         </div>

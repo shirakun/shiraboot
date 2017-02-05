@@ -49,7 +49,7 @@ function getUserInfo($odb,$arr=null)
 function bootHistory($odb,$limit=20)
 {
 	$uid=cookie('uid');
-	return $odb->where(['uid'=>cookie('uid')])->limit($limit)->order('start_time')->select();
+	return $odb->where(['uid'=>cookie('uid')])->order('start_time desc')->limit($limit)->select();
 }
 
 //获取正在进行中的攻击数量

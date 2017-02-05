@@ -118,7 +118,7 @@ class User extends Controller
 		$history = db('history');
 		if(!input('?param.list') || input('param.list')<=0)
 		{
-			$historyList = $history->where('uid',$userInfo['id'])->limit(20)->select();
+			$historyList = $history->where('uid',$userInfo['id'])->order('start_time desc')->limit(20)->select();
 			$list['previous']=0;
 		}
 		else

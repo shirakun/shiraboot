@@ -13,9 +13,7 @@ class Hub extends Controller
 			$this->error('未登录','User/login');
 			exit;
 		}
-		
 		$config = db('config');
-
 		//取模式列表
 		$methodList = [
 			'reflect' =>json_decode($config->where('name','reflect')->find()['value'],true),
@@ -191,9 +189,58 @@ class Hub extends Controller
 		}
 		else
 		{
+		
+			$this->assign('historyList',bootHistory(db('history'),8)); //历史表
 			$this->assign('userInfo',$userInfo);
 			$this->assign('methodList',$methodList);
 			return $this->fetch();
 		}
+	}
+	
+	public function stop(){
+		$user = db('users');
+        if(!$userInfo = chickLogin($user))
+		{
+			$this->error('未登录','User/login');
+			exit;
+		}
+		$history = db('history');
+		if(!$bootInfo = $history->where('id',input('param.id'))->find()){
+			$this->error('没有找到攻击信息!');
+			exit;
+		}
+		
+		if($bootInfo['stop'] == 1 || ($bootInfo['start_time'] + $bootInfo['time']) < time()){
+			$this->error('此攻击任务已停止或已结束!');
+			exit;
+		}
+		
+		if(!$serverInfo = db('server')->where('id',$bootInfo['server_id'])->find()){
+			$this->error('没有找到此节点的信息,这个节点可能已被删除!');
+			exit;
+		}
+		
+		//和节点建立连接
+		if(!$con = ssh2_connect($serverInfo['host'],$serverInfo['port'])) //无法建立连接时
+		{
+			$this->error('和节点建立连接超时,请再次尝试,多次尝试无效时请联系管理员解决.');
+			exit;
+		}
+		elseif(!ssh2_auth_password($con, $serverInfo['username'], $serverInfo['passwd'])) //账户验证失败时
+		{
+			$this->error('无法和节点建立起受信任的连接,请联系管理员,错误:auth-'.$serverInfo['id']);
+			exit;
+		}
+		$command = "screen -X -S {$bootInfo['id']} quit";
+		if(!ssh2_exec($con, $command))
+		{
+			$this->error("执行攻击失败,请再次尝试,多次无效后请联系管理员.");
+			exit;
+		}else{
+			$bootInfo['stop'] = 1;
+			$history->where('id',$bootInfo['id'])->update($bootInfo);
+			$this->success('成功停止攻击任务!');
+		}
+		
 	}
 }
