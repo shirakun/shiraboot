@@ -25,11 +25,20 @@ shiraboot的产生纯属个人练手项目,其框架基于thinkphp5.0.2,且作�
 
 > ThinkPHP5的运行环境要求PHP5.4以上。
 
+## 使用方法
+1.修改数据库连接信息(参照thinkphp5.0)
+2.导入根目录的inport.sql
+3.设置网站目录为根目录的public(详情参见thinkphp5.0入口文件)
+4.修改application\config.php的最后几项配置
+5.cron任务:get请求/admin/cron/index?你的密钥(确保每天执行一次!)
+6.注册一个用户数据库内修改此用户的type值为2(管理员)
+7.没了
+
 ## 参与开发
 直接push到master即可
 
 ## 其它
 
-shiraboot继承ThinkPHP遵循Apache2开源协议发布，并提供免费使用。
+此程序免费发布免费使用,禁止出售.
 
 我的博客:[矢澤にこ](https://blog.ni-co.moe/)

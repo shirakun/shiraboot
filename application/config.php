@@ -233,4 +233,6 @@ return [
 	'pwdhead' => 'shira', //密码加密时的前缀
 	'pwdfoot' => 'sama', //密码加密时的后缀
 	'cronpwd'=>'your_key', //cron的密钥
+	'pay_api'=>'your api id',
+	'pay_key'=>'your api key',
 ];
