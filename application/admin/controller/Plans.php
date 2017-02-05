@@ -93,6 +93,9 @@ class Plans extends Controller
 			$this->error('未查询到套餐信息或参数不正确.');
 			exit;
 		}
+		if(db('cdkey')->where(['plan'=>input('param.id'),'status'=>0])-find()){
+			$this->error('此套餐还有未使用的密钥,不能删除(想删除可以先删除此套餐未使用的密钥,但不推荐这么做!).');
+		}
 		$plans->where('id',input('param.id'))->delete();
 		$this->success('套餐删除成功!','Admin/Plans/index');
 	}

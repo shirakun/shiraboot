@@ -165,7 +165,13 @@ class User extends Controller
 					$this->error('您的账户已经有一个在有效期内的套餐,并且和您购买的卡密所属套餐不同,请等待到期后再次激活此卡密!');
 					exit;
 				}
-				elseif($userInfo['plan'] == $cdkeyInfo['plan'] && $userInfo['expiration'] > time()) //套餐相同但未到期
+				
+				if(!$planInfo = db('plans')->where('id',$cdkeyInfo['plan'])->find()){
+					$this->error('没有找到对应此密钥的套餐信息,请联系管理员!');
+					exit;
+				}
+				
+				if($userInfo['plan'] == $cdkeyInfo['plan'] && $userInfo['expiration'] > time()) //套餐相同但未到期
 				{
 					$userInfo['expiration'] = $userInfo['expiration'] + $cdkeyInfo['expiration'];
 					$successInfo = '续期成功';
@@ -225,7 +231,7 @@ class User extends Controller
 			//更新密钥使用信息
 			$cdkeyInfo['status'] = 1;
 			$cdkeyInfo['uid'] =$userInfo['id'];
-			$cdkeyInfo['user_time'] =time();
+			$cdkeyInfo['use_time'] =time();
 			$cdkey->where('id',$cdkeyInfo['id'])->update($cdkeyInfo);
 			$this->success($successInfo,'Index/Hub/index');
 			
