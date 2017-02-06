@@ -18,6 +18,7 @@ class Hub extends Controller
 		$methodList = [
 			'reflect' =>json_decode($config->where('name','reflect')->find()['value'],true),
 			'usually' =>json_decode($config->where('name','usually')->find()['value'],true),
+			'application' =>json_decode($config->where('name','application')->find()['value'],true)
 		];
 		if(Request::instance()->isPost())
 		{
@@ -82,6 +83,13 @@ class Hub extends Controller
 					exit;
 				}
 			}
+			//判断7层下是否为合法url
+			if(in_array($hubInfo['mode'],$methodList['application'])){
+				if(!filter_var($hubInfo['host'], FILTER_VALIDATE_URL)) {
+					$this->error('您输入的不是一个有效的url!');
+					exit;
+				}
+			}
 			//取可用节点列表
 			$server = db('server');
 			if(!$serverList = $server->where("vip='{$hubInfo['vip']}' and mode like '%{$hubInfo['mode']}%'")->select())
@@ -127,6 +135,10 @@ class Hub extends Controller
 						elseif(in_array($hubInfo['mode'],$methodList['usually']))  //所有的通常类型的命令
 						{
 							$command = "screen -d -m -S {$bootId} {$serverInfo['tool_dir']}/{$hubInfo['mode']} {$hubInfo['host']} {$hubInfo['port']} 1 -1 {$hubInfo['time']}";
+						}
+						elseif(in_array($hubInfo['mode'],$methodList['application']))  //所有7层模式
+						{
+							$command = "screen -d -m -S {$bootId} {$serverInfo['tool_dir']}/{$hubInfo['mode']} '{$hubInfo['host']}' {$serverInfo['tool_dir']}/{$hubInfo['mode']}.txt {$hubInfo['time']} 600";
 						}
 						else
 						{

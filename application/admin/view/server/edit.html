@@ -102,6 +102,14 @@
 										</label>
 										{/volist}
 									</div>
+									<div class="form-group">
+										<label>7层模式</label>
+										{volist name="methodList.application" id="vo"}
+										<label class="checkbox-inline">
+											<input name="mode[]" value="{$vo}" type="checkbox"><span style="text-transform:uppercase;" >{$vo}</span>
+										</label>
+										{/volist}
+									</div>
 									<div class="alert alert-danger">为了降低查水表的几率,建议通常模式和反射模式不要放在同一节点,普通模式强烈建议使用匿名服务器!</div>
 									<div class="form-group input-group">
 										<span class="input-group-addon">最大并发</span>

@@ -92,7 +92,7 @@
 												{else/}
 												<td>无</td>
 												{/eq}
-												<td>{$vo.passwd}</td>
+												<td>{:substr_replace($vo['passwd'],'*******',1,7)}</td>
 												{eq name="vo.type" value="1"}
 												<td>{$vo.tool_dir}</td>
 												{else/}

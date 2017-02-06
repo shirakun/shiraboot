@@ -120,6 +120,7 @@ CREATE TABLE IF NOT EXISTS `srk_config` (
 INSERT INTO `srk_config` (`name`, `value`, `note`) VALUES
 ('reflect', '["ntp","dns","ssdp","mssql","chargen","snmp","sentinel","netbios","ts3","db2","portmap"]', '反射类型的模式'),
 ('usually', '["udp","vse","telnet","home","tcp","tcp-se","tcp-ack","tcp-rst","tcp-psh","tcp-fin","tcp-xmas","wizard","dominate","zap","ssyn","essyn","issyn","xsyn","zsyn","csyn"]', '通常类型的模式'),
+('application', '["xmlrpc"]', '通常类型的模式'),
 ('cron_user', '1486253813', '上一次更新用户数据执行的时间'),
 ('api_buy', '0', '是否可以购买api');
 

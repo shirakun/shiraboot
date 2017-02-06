@@ -90,6 +90,7 @@ class Server extends Controller
 			$methodList = [
 				'reflect' =>json_decode($config->where('name','reflect')->find()['value'],true),
 				'usually' =>json_decode($config->where('name','usually')->find()['value'],true),
+				'application' =>json_decode($config->where('name','application')->find()['value'],true),
 			];
 			$this->assign('methodList',$methodList);
 			$this->assign('userInfo',$userInfo);
@@ -163,6 +164,7 @@ class Server extends Controller
 			$methodList = [
 				'reflect' =>json_decode($config->where('name','reflect')->find()['value'],true),
 				'usually' =>json_decode($config->where('name','usually')->find()['value'],true),
+				'application' =>json_decode($config->where('name','application')->find()['value'],true),
 			];
 			$this->assign('methodList',$methodList);
 			$this->assign('userInfo',$userInfo);
